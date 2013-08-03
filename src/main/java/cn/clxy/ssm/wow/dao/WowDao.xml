@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.clxy.ssm.wow.dao.WowDao">
+
+	<cache />
+
+	<delete id="deleteEquip">
+		delete from
+		wow_role_equipment
+		where
+		role_id=#{param1} and equipment_id=#{param2}
+	</delete>
+
+	<insert id="insertEquip" useGeneratedKeys="true" keyProperty="id"
+		parameterType="cn.clxy.ssm.wow.data.WowRoleEquipment">
+		insert into
+		wow_role_equipment
+		(role_id, equipment_id)
+		values
+		(#{roleId},
+		#{equipmentId})
+	</insert>
+
+	<delete id="deleteWeek" parameterType="cn.clxy.ssm.wow.data.WowRoleWeek">
+		delete from
+		wow_role_week
+		where
+		role_id=#{roleId} and
+		boss=#{boss} and kill_week=#{killWeek}
+	</delete>
+
+	<insert id="insertWeek" useGeneratedKeys="true" keyProperty="id"
+		parameterType="cn.clxy.ssm.wow.data.WowRoleWeek">
+		insert into
+		wow_role_week
+		(role_id, boss, kill_week)
+		values
+		(#{roleId},#{boss},#{killWeek})
+	</insert>
+
+</mapper>

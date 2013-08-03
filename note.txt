@@ -1,0 +1,206 @@
+﻿-- 关于jsr303
+	+ 后台用hibernate-validator。
+	+ 前台希望能够根据后台的annotation自动生成。目前https://kenai.com/projects/jsr303js/pages/Home有个实现。貌似可以。
+
+-- ConstraintViolationBuilder#addNode虽然deprecated，但该版本4.3.1没有实现新替代方法。
+
+-- forward:和redirect:只用在action上。jsp时不用任何前缀。
+
+-- 关于Dao
+	1. 最初的设计BaseDao处理共通。其他Dao继承BaseDao。但是失败。
+	2. Spring对Dao拦截，无意义。拿不到类，拿不到SQL，也不能动态设置SQL。
+	3. MyBatis的Interceptor。首先update和query是分离的。其次也拿不到类的相关信息，只有SQL文及参数。
+	最终决定用UtilDao。
+	由于不是接口，无法自动注册。手动配置。
+	<bean id="utilDao" class="cn.clxy.ssm.common.dao.UtilDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	这样就无法用以下方法拦截Dao
+	<aop:aspectj-autoproxy>
+		<aop:include name="daoInterceptor"/>
+	</aop:aspectj-autoproxy>
+	<bean id="daoInterceptor" class="cn.clxy.ssm.common.aop.DaoInterceptor" />
+	
+
+-- bootstrap需要指定中文或相应语言的字体，不然会乱码。
+	麻烦的modal。
+	1. 不要动背景。backdrop设置成透明。
+	2. 可以回调函数。
+	3. fade不大好用。
+	navbar的高度，在其主页->customize里设置然后下载，否则要调整好多。
+
+--Spring MVC Path Parameter
+    当格式不正确时，抛出org.springframework.beans.TypeMismatchException。
+    按现在处理方式走SystemException，不妥。
+   另，Form提交时如果格式不对，会走BindException的路线。
+   但是message不对头，报的是convert失败的相关信息，需要定制。
+   定制办法是在webBindingInitializer中追加自己的BindingErrorProcessor
+   @see SSMBindingErrorProcessor
+
+-- MyBatis Generator
+	ModelのClassのコメントが通常生成しない。
+	@see BaseRecordGenerator#getCompilationUnits
+
+-- @ExceptionHandlerメソッドには、
+	通常の
+		ModelMap model = new ModelMap(key, value);
+		return new ModelAndView(path, model);
+	やり方で、JSPではmodelを取得できない。
+	直接、
+		request.setAttribute(key, value);
+	ならOK。
+
+-- javax.validation不能在一个属性中检查另个属性，只能在验证类时处理类似情形。
+
+-- Hibernate Validator只能用4.x。或者升级Spring到4.x(beta)
+
+-- hibernate validator
+	メッセージ処理がAnnotationのパラメータを利用している。下記参照
+	ResourceBundleMessageInterpolator#interpolateMessage
+
+-- 20130501 jQuery table
+	http://plugins.jquery.com/tablesorter/ <- better
+	http://www.datatables.net/ 
+
+--20130430 java excel
+	POI 3.9 jxls 1.0.2(template)
+	JExcel API = jexcelapi - old
+
+-- ContentNegotiatingViewResolver
+	当扩展名是json时，比如 abc.json，会自动以json方式处理。
+	当扩展名是xls是，比如abc.xls，自动以excel方式处理。
+	最后靠InternalResourceViewResolver接住，以JSP方式处理。
+
+--Excel
+ 	POI 3.9
+ 	jxls要不要用。也许该用。用！
+
+--Spring取url的扩展名 
+		String filename = WebUtils.extractFullFilenameFromUrlPath(path);
+		String extension = StringUtils.getFilenameExtension(filename);
+
+-- 关于package的基础url配置。
+	1. 在该package的package-info.java中，用@RequestMapping(value="/packageUrl")配置。
+	2. 需要以/开头。
+	3. 处理上，认为/开头是绝对路径，不再追加package的url。以防止出现类似/packageUrl/packageUrl的多重多余设置。
+	4. 该package用的jsp等资源需要放置在packageUrl的文件夹内。
+
+-- 关于ReturnValueHandler，由于spring mvc有默认的Return value handlers，所以有两种选择。
+	1.要么全部替换掉默认的handlers。@see RequestMappingHandlerAdapter
+	2.要么追加自己的handler，放入customReturnValueHandlers。
+		但需要注意的是，由于custom handler会被追加到已有handler列表的最后（不是最后的最后），所以确保不会被其他默认的handler先拦截掉。
+
+-- context:include-filter type="regex" 
+  expression里面不能使用properties，例如expression="${naming.action}"，和正则表达式冲突，抛异常。
+
+---== <context:component-scan base-package="cn.clxy.ssm" />
+ TODO 需要移动到applicationContext.xml -> Done
+ 
+--	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="cn.clxy.ssm" />
+	</bean>
+
+	basepackage 是否支持正则表达式。
+	不支持。但支持通配符。指定文件夹内所有Interface均被注册。
+	无法按照命名规范自动，也许所有的Dao继承个BaseDao？但是也不好！
+	TODO 需要改造MapperScannerConfigurer！ -> Done see DaoScanner
+
+---== DB Driver 需要放在tomcat/lib/下才可以。
+ 放在web-inf/lib下不起作用。
+ 怀疑是dao.xml里用了org.apache.tomcat.jdbc.pool.DataSource，导致tomcat只搜寻自己的lib目录。
+ 
+---== MyBatis的XxxMapper.xml和XxxMapper类放在一起，省去配置。
+ 
+ ---== Spring的异常 HandlerExceptionResolver
+ 
+ ---== 自动注册的scope应该都是singleton的。
+ 
+ ---== <mvc:annotation-driven /> 和 <context:annotation-config /> 的区别。
+ 	有context:component-scan时，<context:annotation-config />貌似不需要。
+ 	mvc:annotation-driven为Spring MVC的某些特性服务。
+ 
+ ---== TODO 继承并覆盖 RequestMappingHandlerMapping#isHandler
+ 	->DONE see ActionScanner
+ 
+ ---== 完全去除common-logging的办法是
+ 
+ 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring-framework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		和，
+		<!---== 将common-logging转向slf4j。如果没有转向的话，还是在某个使用common-logging的地方抛异常。 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+	
+---== Spring MVC 异常处理。
+ TODO 如何处理JSON请求时的异常？
+
+---== <mvc:annotation-driven /> 的等价替换
+	<bean name="handlerAdapter"
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+				<property name="conversionService">
+					<bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
+				</property>
+				<property name="validator">
+					<bean class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+						<property name="validationMessageSource" ref="messageSource" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter"></bean>
+				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>
+				<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"></bean>
+				<bean class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean name="handlerMapping" class="cn.clxy.ssm.common.web.ActionScanner" />
+
+	TODO 似乎不是完全等价，差别如下。
+	> mvc:annotation-driven 
+		mvcContentNegotiationManager
+		org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping#0
+		org.springframework.format.support.FormattingConversionServiceFactoryBean#0
+		org.springframework.validation.beanvalidation.LocalValidatorFactoryBean#0
+		org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0
+		org.springframework.web.servlet.handler.MappedInterceptor#0
+		org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver#0
+		org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver#0
+		org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver#0
+		org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping
+		org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter
+		org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter
+	> xml
+		handlerAdapter
+		handlerMapping
+	TODO 功能上不知是否有区别。
+	
+	 如果同时使用<mvc:annotation-driven />和上述配置，需要注意顺序。
+	 如果<mvc:annotation-driven />在前，hibernate的LocalValidatorFactoryBean将加载不了spring的properties，被忽略。

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/aop/spring-jdbc.xsd">
+
+	<!-- 持久层——MyBatis——配置文件。 -->
+
+	<!-- Tomcat's Datasource
+	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&#38;zeroDateTimeBehavior=round&#38;autoReconnect=true" />
+		<property name="username" value="root" />
+		<property name="password" value="rootroot" />
+		<property name="testOnBorrow" value="true" />
+		<property name="validationQuery" value="/* ping */SELECT 1" />
+	</bean>
+	-->
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:file:/WEB-INF/h2db;MODE=MYSQL;" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>
+
+	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
+		<jdbc:script location="classpath:schema_h2.sql" />
+	</jdbc:initialize-database>
+
+	<!-- transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- define the SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 自定义Dao扫描。注册并组装。 -->
+	<bean class="cn.clxy.ssm.common.dao.DaoScanner">
+		<property name="basePackage" value="cn.clxy.ssm.*.dao" />
+		<property name="excludeFilters">
+			<list>
+				<value><![CDATA[.*(?<!Dao)$]]></value>
+				<value><![CDATA[.*UtilDao$]]></value>
+			</list>
+		</property>
+	</bean>
+	<bean id="utilDao" class="cn.clxy.ssm.common.dao.db.UtilDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="dialect" class="cn.clxy.ssm.common.dao.db.LimitOffsetDialect" />
+
+	<aop:aspectj-autoproxy>
+		<aop:include name="daoInterceptor" />
+	</aop:aspectj-autoproxy>
+	<bean id="daoInterceptor" class="cn.clxy.ssm.common.aop.DaoInterceptor" />
+</beans>
