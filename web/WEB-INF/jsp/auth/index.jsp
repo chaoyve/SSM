@@ -35,6 +35,7 @@
 		<a href="http://www.eyecon.ro/bootstrap-datepicker/">Datepicker for Bootstrap</a>,
 		<a href="https://github.com/Mottie/tablesorter">tablesorter</a>.
 	</p>
+	<p><a href='<c:url value="/auth/download.xls"/>'>Excel Test.</a></p>
 	<hr>
 	<p class="pull-right">Powered by &copy; CLXY Studio</p>
 </div>
