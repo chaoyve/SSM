@@ -69,6 +69,9 @@
 	</jsp-config>
 
 	<listener>
+		<listener-class>cn.clxy.ssm.common.web.WebAppListener</listener-class>
+	</listener>
+	<listener>
 		<listener-class>cn.clxy.ssm.common.web.SessionListener</listener-class>
 	</listener>
 </web-app>
