@@ -9,22 +9,6 @@
 
 -- forward:和redirect:只用在action上。jsp时不用任何前缀。
 
--- 关于Dao
-1. 最初的设计BaseDao处理共通。其他Dao继承BaseDao。但是失败。
-2. Spring对Dao拦截，无意义。拿不到类，拿不到SQL，也不能动态设置SQL。
-3. MyBatis的Interceptor。首先update和query是分离的。其次也拿不到类的相关信息，只有SQL文及参数。
-最终决定用UtilDao。
-由于不是接口，无法自动注册。手动配置。
-<bean id="utilDao" class="cn.clxy.ssm.common.dao.UtilDao">
-	<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-</bean>
-这样就无法用以下方法拦截Dao
-<aop:aspectj-autoproxy>
-	<aop:include name="daoInterceptor"/>
-</aop:aspectj-autoproxy>
-<bean id="daoInterceptor" class="cn.clxy.ssm.common.aop.DaoInterceptor" />
-	
-
 -- bootstrap需要指定中文或相应语言的字体，不然会乱码。
 	麻烦的modal。
 	1. 不要动背景。backdrop设置成透明。
