@@ -1,4 +1,4 @@
-package cn.clxy.ssm.common.dao.db;
+package cn.clxy.ssm.common.dao.impl;
 
 import cn.clxy.ssm.common.dao.Dialect;
 

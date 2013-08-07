@@ -2,6 +2,8 @@ package cn.clxy.ssm.common.dao;
 
 import java.util.Properties;
 
+import javax.annotation.Resource;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
@@ -9,16 +11,26 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
 
-@Intercepts({ @Signature(
-		type = Executor.class,
-		method = "update",
-		args = { MappedStatement.class, Object.class }) })
-public class UpdateInterceptor implements Interceptor {
+@Intercepts({
+		@Signature(
+				type = Executor.class,
+				method = "update",
+				args = { MappedStatement.class, Object.class }),
+		@Signature(
+				type = Executor.class,
+				method = "query",
+				args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
+public class MybatisInterceptor implements Interceptor {
+
+	@Resource
+	protected Handler daoHandler;
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
-		return DaoUtil.handle(invocation);
+		return daoHandler.handle(invocation);
 	}
 
 	@Override

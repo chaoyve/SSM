@@ -10,23 +10,20 @@
 
 	<!-- 持久层——MyBatis——配置文件。 -->
 
-	<!-- Tomcat's Datasource
-	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url"
-			value="jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&#38;zeroDateTimeBehavior=round&#38;autoReconnect=true" />
-		<property name="username" value="root" />
-		<property name="password" value="rootroot" />
-		<property name="testOnBorrow" value="true" />
-		<property name="validationQuery" value="/* ping */SELECT 1" />
-	</bean>
-	-->
-
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="org.h2.Driver" />
 		<property name="url" value="jdbc:h2:file:${webroot}WEB-INF/work/mydb;MODE=MYSQL;" />
+		<!-- ======================hsqldb -->
 		<!-- property name="driverClass" value="org.hsqldb.jdbcDriver" / -->
 		<!-- property name="url" value="jdbc:hsqldb:file:${webroot}WEB-INF/work/mydb;shutdown=true" / -->
+		<!-- ======================MySQL -->
+		<!-- property name="driverClass" value="com.mysql.jdbc.Driver" / -->
+		<!-- property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&#38;zeroDateTimeBehavior=round&#38;autoReconnect=true" 
+			/ -->
+		<!-- property name="username" value="root" / -->
+		<!-- property name="password" value="rootroot" / -->
+		<!-- property name="testOnBorrow" value="true" / -->
+		<!-- property name="validationQuery" value="/* ping */SELECT 1" / -->
 	</bean>
 
 	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
@@ -40,8 +37,13 @@
 
 	<!-- define the SqlSessionFactory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="configLocation" value="classpath:mybatis.xml" />
 		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis.xml" />
+		<property name="plugins">
+			<array>
+				<bean class="cn.clxy.ssm.common.dao.MybatisInterceptor" />
+			</array>
+		</property>
 	</bean>
 
 	<!-- 自定义Dao扫描。注册并组装。 -->
@@ -54,21 +56,26 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="utilDao" class="cn.clxy.ssm.common.dao.db.UtilDaoImpl">
+	<bean id="utilDao" class="cn.clxy.ssm.common.dao.impl.UtilDaoImpl">
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
-	<bean id="dialect" class="cn.clxy.ssm.common.dao.db.LimitOffsetDialect" />
 
 	<aop:aspectj-autoproxy>
 		<aop:include name="daoInterceptor" />
 	</aop:aspectj-autoproxy>
 	<bean id="daoInterceptor" class="cn.clxy.ssm.common.aop.DaoInterceptor" />
-	
-	<bean id="daoHandler" class="cn.clxy.ssm.common.dao.handler.handlers">
-	    <property name="handlers">
-	        <list>
-	            <bean class="cn.clxy.ssm.common.dao."></bean>
-	        </list>
-	    </property>
+
+	<bean id="daoHandler" class="cn.clxy.ssm.common.dao.impl.Handlers">
+		<property name="handlers">
+			<list>
+				<bean class="cn.clxy.ssm.common.dao.impl.PreHandler" />
+				<bean class="cn.clxy.ssm.common.dao.impl.PaginationHandler">
+					<property name="dialect">
+						<bean class="cn.clxy.ssm.common.dao.impl.LimitOffsetDialect" />
+					</property>
+				</bean>
+				<bean class="cn.clxy.ssm.common.dao.impl.AutoSqlHandler" />
+			</list>
+		</property>
 	</bean>
 </beans>

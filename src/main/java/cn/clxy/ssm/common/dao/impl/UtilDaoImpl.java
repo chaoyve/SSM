@@ -1,4 +1,4 @@
-package cn.clxy.ssm.common.dao.db;
+package cn.clxy.ssm.common.dao.impl;
 
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;

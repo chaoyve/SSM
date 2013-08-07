@@ -1,12 +1,10 @@
-package cn.clxy.ssm.common.dao.handler;
+package cn.clxy.ssm.common.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-
-import javax.annotation.Resource;
 
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -19,10 +17,19 @@ import cn.clxy.ssm.common.dao.Dialect;
 import cn.clxy.ssm.common.dao.Handler;
 import cn.clxy.ssm.common.data.PaginationCondition;
 
+/**
+ * 自动分页拦截器。
+ * <ul>
+ * <li>是否分页取决于查询参数是否是PaginationCondition类。</li>
+ * <li>先查询总件数，如果总件数为0，不再继续查询下去。</li>
+ * <li>完全无视MyBatis的RowBounds。不可并用！</li>
+ * </ul>
+ * 参考自https://github.com/yfyang/mybatis-pagination
+ * @author clxy
+ */
 public class PaginationHandler implements Handler {
 
-	@Resource
-	protected Dialect dialect;
+	private Dialect dialect;
 
 	@Override
 	public Object handle(Invocation invocation) throws Throwable {
@@ -86,6 +93,10 @@ public class PaginationHandler implements Handler {
 			rs.close();
 			return count;
 		}
+	}
+
+	public void setDialect(Dialect dialect) {
+		this.dialect = dialect;
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(PaginationHandler.class);

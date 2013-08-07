@@ -1,4 +1,4 @@
-package cn.clxy.ssm.common.dao.handler;
+package cn.clxy.ssm.common.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +11,6 @@ public class Handlers implements Handler {
 
 	private List<Handler> handlers = new ArrayList<>();
 
-	public Handlers() {
-		handlers.add(new PaginationHandler());
-		handlers.add(new AutoSqlHandler());
-	}
-
 	@Override
 	public Object handle(Invocation invocation) throws Throwable {
 
@@ -27,5 +22,9 @@ public class Handlers implements Handler {
 		}
 
 		return invocation.proceed();
+	}
+
+	public void setHandlers(List<Handler> handlers) {
+		this.handlers = handlers;
 	}
 }

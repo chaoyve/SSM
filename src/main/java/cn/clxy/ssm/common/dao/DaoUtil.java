@@ -12,14 +12,11 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-
-import cn.clxy.ssm.common.dao.handler.Handlers;
 
 /**
  * DAO相关工具。<br>
@@ -154,12 +151,6 @@ public final class DaoUtil {
 		}
 	}
 
-	public static Object handle(Invocation invocation) throws Throwable {
-		return handler.handle(invocation);
-	}
-
 	private DaoUtil() {
 	}
-
-	private static final Handler handler = new Handlers();
 }
