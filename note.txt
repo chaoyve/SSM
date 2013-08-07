@@ -1,4 +1,7 @@
-﻿-- 关于jsr303
+﻿-- hsqldb mysql 模式不好用
+	auto_increment和unsigned都报错。
+
+-- 关于jsr303
 	+ 后台用hibernate-validator。
 	+ 前台希望能够根据后台的annotation自动生成。目前https://kenai.com/projects/jsr303js/pages/Home有个实现。貌似可以。
 

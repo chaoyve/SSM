@@ -23,14 +23,14 @@
 	-->
 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-		<!-- property name="driverClass" value="org.h2.Driver" / -->
-		<!-- property name="url" value="jdbc:h2:file:WEB-INF/h2db;MODE=MYSQL;" / -->
-		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:file:${webroot}WEB-INF/mydb" />
+		<property name="driverClass" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:file:${webroot}WEB-INF/work/mydb;MODE=MYSQL;" />
+		<!-- property name="driverClass" value="org.hsqldb.jdbcDriver" / -->
+		<!-- property name="url" value="jdbc:hsqldb:file:${webroot}WEB-INF/work/mydb;shutdown=true" / -->
 	</bean>
 
 	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
-		<jdbc:script location="classpath:schema_h2.sql" />
+		<jdbc:script location="classpath:schema.sql" />
 	</jdbc:initialize-database>
 
 	<!-- transaction manager, use JtaTransactionManager for global tx -->
