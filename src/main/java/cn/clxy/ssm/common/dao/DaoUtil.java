@@ -19,7 +19,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import cn.clxy.ssm.common.dao.handler.Handler;
 import cn.clxy.ssm.common.dao.handler.Handlers;
 
 /**

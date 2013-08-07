@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.ibatis.plugin.Invocation;
 
+import cn.clxy.ssm.common.dao.Handler;
+
 public class Handlers implements Handler {
 
 	private List<Handler> handlers = new ArrayList<>();

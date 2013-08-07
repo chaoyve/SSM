@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import cn.clxy.ssm.common.dao.DaoUtil;
 import cn.clxy.ssm.common.dao.Dialect;
+import cn.clxy.ssm.common.dao.Handler;
 import cn.clxy.ssm.common.data.PaginationCondition;
 
 public class PaginationHandler implements Handler {

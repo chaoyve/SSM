@@ -63,4 +63,12 @@
 		<aop:include name="daoInterceptor" />
 	</aop:aspectj-autoproxy>
 	<bean id="daoInterceptor" class="cn.clxy.ssm.common.aop.DaoInterceptor" />
+	
+	<bean id="daoHandler" class="cn.clxy.ssm.common.dao.handler.handlers">
+	    <property name="handlers">
+	        <list>
+	            <bean class="cn.clxy.ssm.common.dao."></bean>
+	        </list>
+	    </property>
+	</bean>
 </beans>

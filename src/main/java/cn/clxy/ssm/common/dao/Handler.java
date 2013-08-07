@@ -1,4 +1,4 @@
-package cn.clxy.ssm.common.dao.handler;
+package cn.clxy.ssm.common.dao;
 
 import org.apache.ibatis.plugin.Invocation;
 
