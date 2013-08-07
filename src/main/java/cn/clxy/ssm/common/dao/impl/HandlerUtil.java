@@ -1,4 +1,4 @@
-package cn.clxy.ssm.common.dao.handler;
+package cn.clxy.ssm.common.dao.impl;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;

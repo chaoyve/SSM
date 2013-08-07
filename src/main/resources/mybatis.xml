@@ -6,13 +6,4 @@
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 		<!-- <setting name="cacheEnabled" value="false" /> -->
 	</settings>
-
-	<plugins>
-		<plugin interceptor="cn.clxy.ssm.common.dao.QueryInterceptor">
-			<property name="dialectName" value="mysql"/>
-		</plugin>
-		<plugin interceptor="cn.clxy.ssm.common.dao.UpdateInterceptor">
-		</plugin>
-	</plugins>
-
 </configuration>
