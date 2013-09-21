@@ -1,4 +1,9 @@
-﻿-- hsqldb mysql 模式不好用
+﻿-- authentication token
+	AuthToken="oss" + " "+ accessKey + ":" + Signature
+	Signature=BASE64(HMAC-SHA1(secretKey))
+	后台需要确认secretKey是否过期。
+
+-- hsqldb mysql 模式不好用
 	auto_increment和unsigned都报错。
 
 -- 关于jsr303
