@@ -3,6 +3,9 @@
 	Signature=BASE64(HMAC-SHA1(secretKey))
 	后台需要确认secretKey是否过期。
 
+-- bootstrap 3
+	grid带padding。所以grid里面再放控件，就不会挤在一起了。
+
 -- hsqldb mysql 模式不好用
 	auto_increment和unsigned都报错。
 
