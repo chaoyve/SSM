@@ -41,6 +41,7 @@ public final class BeanUtil {
 	}
 
 	/**
+	 * @deprecated {@link java.util.Objects#equals(Object, Object)}
 	 * @param src
 	 * @param dest
 	 * @return

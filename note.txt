@@ -12,6 +12,7 @@
 -- 关于jsr303
 	+ 后台用hibernate-validator。
 	+ 前台希望能够根据后台的annotation自动生成。目前https://kenai.com/projects/jsr303js/pages/Home有个实现。貌似可以。
+	+ 或者统一Javascript，前台验证使用该脚本。后台使用javax.script验证，只是效率估计不会好。
 
 -- ConstraintViolationBuilder#addNode虽然deprecated，但该版本4.3.1没有实现新替代方法。
 
